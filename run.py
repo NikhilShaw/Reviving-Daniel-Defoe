@@ -1,4 +1,5 @@
 import numpy as np 
+import sys
 from keras.models import Sequential 
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -37,19 +38,21 @@ x=x/float(len(chars))
 y = np_utils.to_categorical(dataY)
 # define the LSTM model
 model = Sequential()
-model.add(LSTM(256, input_shape=(x.shape[1], x.shape[2])))
+model.add(LSTM(256, input_shape=(x.shape[1], x.shape[2]), return_sequences = True))
+model.add(Dropout(0.2))
+model.add(LSTM(256))
 model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 model.compile(loss= 'categorical_crossentropy' , optimizer= 'adam' )
 # define the checkpoint
-filepath="weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"
+filepath="best_weight.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor= 'loss' , verbose=1, save_best_only=True,
 mode= min )
 callbacks_list = [checkpoint]
 # fit the model
-model.fit(x, y, nb_epoch=50, batch_size=64, callbacks=callbacks_list)
+model.fit(x, y, nb_epoch=50, batch_size=64, callbacks= callbacks_list)
 # load the network weights
-filename = "weights-improvement-47-1.2219-bigger.hdf5"
+filename = "best_weight.hdf5"
 model.load_weights(filename)
 model.compile(loss= 'categorical_crossentropy' , optimizer= 'adam' )
 # pick a random seed
@@ -59,15 +62,13 @@ print "Seed:"
 print "\"",''.join([int_to_char[value] for value in pattern]), "\""
 # generate characters
 for i in range(1000):
-    x = numpy.reshape(pattern, (1, len(pattern), 1))
-    x = x / float(n_vocab)
+    x = np.reshape(pattern, (1, len(pattern), 1))
+    x = x / float(len(chars))
     prediction = model.predict(x, verbose=0)
-    index = numpy.argmax(prediction)
+    index = np.argmax(prediction)
     result = int_to_char[index]
     seq_in = [int_to_char[value] for value in pattern]
     sys.stdout.write(result)
     pattern.append(index)
     pattern = pattern[1:len(pattern)]
 print "\nDone."
-
-
