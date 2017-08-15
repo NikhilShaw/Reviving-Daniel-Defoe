@@ -52,7 +52,7 @@ callbacks_list = [checkpoint]
 # fit the model
 model.fit(X, y, nb_epoch=50, batch_size=64, callbacks=callbacks_list)
 # load the network weights
-filename = "weights-improvement-47-1.2219-bigger.hdf5"
+filename = "weights.hdf5"
 model.load_weights(filename)
 model.compile(loss= categorical_crossentropy , optimizer= adam )
 # pick a random seed
