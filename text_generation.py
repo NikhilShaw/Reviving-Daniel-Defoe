@@ -60,11 +60,11 @@ start = numpy.random.randint(0, len(dataX)-1)
 pattern = dataX[start]
 print "Seed:"
 print "\"",
-.join([int_to_char[value] for value in pattern]), "\""
+"".join([int_to_char[value] for value in pattern]), "\""
 # generate characters
 for i in range(1000):
 	x = numpy.reshape(pattern, (1, len(pattern), 1))
-	x = x / float(n_vocab)
+	x = x / float(len(chars))
 	prediction = model.predict(x, verbose=0)
 	index = numpy.argmax(prediction)
 	result = int_to_char[index]
